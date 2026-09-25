@@ -4,8 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block titulo %}LineControl{% endblock %}</title>
-  <link rel="icon" href="{{ url_for('static', filename='img/favicon.svg', v='6') }}" type="image/svg+xml">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v='6') }}">
+  <link rel="icon" href="{{ url_for('static', filename='img/favicon.svg', v='7') }}" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v='7') }}">
 </head>
 <body>
   <a class="pular" href="#conteudo">Ir para o conteúdo</a>
@@ -85,6 +88,6 @@
   </dialog>
 
   <script id="regras-qualidade" type="application/json">{{ regras_qualidade | tojson }}</script>
-  <script src="{{ url_for('static', filename='js/app.js', v='6') }}"></script>
+  <script src="{{ url_for('static', filename='js/app.js', v='7') }}"></script>
 </body>
 </html>
