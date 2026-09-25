@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block titulo %}Cadastrar peça · LineControl{% endblock %}
+{% block olho %}Nova inspeção{% endblock %}
+{% block cabecalho %}Cadastrar peça{% endblock %}
+{% block conteudo %}
+  <div class="grade-formulario">
+    <form class="cartao formulario" id="form-peca" method="post" action="{{ url_for('pecas.nova') }}" novalidate>
+      {{ form.csrf_token }}
+      <p class="intro">Depois do envio, o sistema avalia a peça sozinho. Valor fora do critério é gravado como reprovado. Campo vazio, texto ou número inválido não é gravado.</p>
+
+      <div class="campo">
+        <label for="codigo">ID da peça</label>
+        <input id="codigo" name="codigo" type="text" required maxlength="{{ regras_qualidade.codigoMax }}" value="{{ form.codigo.data or '' }}" autocomplete="off" aria-describedby="ajuda-codigo{% if erros.codigo %} erro-codigo{% endif %}" {% if erros.codigo %}aria-invalid="true"{% endif %}>
+        <small id="ajuda-codigo">Letras, números, hífen ou sublinhado. O ID não pode se repetir.</small>
+        {% if erros.codigo %}<p class="erro-campo" id="erro-codigo" role="alert">{{ erros.codigo }}</p>{% else %}<p class="erro-campo" id="erro-codigo" role="alert" hidden></p>{% endif %}
+      </div>
+
+      <div class="grade-campos">
+        <div class="campo">
+          <label for="peso">Peso em gramas</label>
+          <input id="peso" name="peso" type="text" inputmode="decimal" required value="{{ form.peso.data or '' }}" placeholder="100,00" aria-describedby="ajuda-peso{% if erros.peso %} erro-peso{% endif %}" {% if erros.peso %}aria-invalid="true"{% endif %}>
+          <small id="ajuda-peso">Critério de aprovação: {{ regras_qualidade.pesoMin }} g a {{ regras_qualidade.pesoMax }} g.</small>
+          {% if erros.peso %}<p class="erro-campo" id="erro-peso" role="alert">{{ erros.peso }}</p>{% else %}<p class="erro-campo" id="erro-peso" role="alert" hidden></p>{% endif %}
+        </div>
+        <div class="campo">
+          <label for="comprimento">Comprimento em centímetros</label>
+          <input id="comprimento" name="comprimento" type="text" inputmode="decimal" required value="{{ form.comprimento.data or '' }}" placeholder="15,00" aria-describedby="ajuda-comprimento{% if erros.comprimento %} erro-comprimento{% endif %}" {% if erros.comprimento %}aria-invalid="true"{% endif %}>
+          <small id="ajuda-comprimento">Critério de aprovação: {{ regras_qualidade.comprimentoMin }} cm a {{ regras_qualidade.comprimentoMax }} cm.</small>
+          {% if erros.comprimento %}<p class="erro-campo" id="erro-comprimento" role="alert">{{ erros.comprimento }}</p>{% else %}<p class="erro-campo" id="erro-comprimento" role="alert" hidden></p>{% endif %}
+        </div>
+      </div>
+
+      <div class="campo">
+        <label for="cor">Cor</label>
+        <input id="cor" name="cor" type="text" required maxlength="{{ regras_qualidade.corMax }}" list="cores-sugeridas" value="{{ form.cor.data or '' }}" placeholder="azul" aria-describedby="ajuda-cor{% if erros.cor %} erro-cor{% endif %}" {% if erros.cor %}aria-invalid="true"{% endif %}>
+        <datalist id="cores-sugeridas">
+          {% for cor in regras_qualidade.cores %}
+            <option value="{{ cor }}"></option>
+          {% endfor %}
+        </datalist>
+        <small id="ajuda-cor">Aprovada somente em azul ou verde. Maiúsculas e espaços nas pontas são normalizados.</small>
+        {% if erros.cor %}<p class="erro-campo" id="erro-cor" role="alert">{{ erros.cor }}</p>{% else %}<p class="erro-campo" id="erro-cor" role="alert" hidden></p>{% endif %}
+      </div>
+
+      <div class="acoes">
+        <button class="btn btn-primario" type="submit">Avaliar e cadastrar</button>
+        <a class="btn btn-secundario" href="{{ url_for('pecas.lista') }}">Cancelar</a>
+      </div>
+    </form>
+
+    <aside class="cartao criterios">
+      <h2>Critérios da linha</h2>
+      <ul>
+        <li><strong>Peso</strong> entre {{ regras_qualidade.pesoMin }} g e {{ regras_qualidade.pesoMax }} g</li>
+        <li><strong>Cor</strong> igual a azul ou verde</li>
+        <li><strong>Comprimento</strong> entre {{ regras_qualidade.comprimentoMin }} cm e {{ regras_qualidade.comprimentoMax }} cm</li>
+      </ul>
+      <p>A peça só é aprovada quando os três critérios passam. Cada falha fica registrada. Aprovadas entram na caixa aberta, com capacidade de {{ regras_qualidade.capacidade }} peças.</p>
+    </aside>
+  </div>
+{% endblock %}

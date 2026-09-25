@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block titulo %}Relatórios · LineControl{% endblock %}
+{% block olho %}Consolidado{% endblock %}
+{% block cabecalho %}Relatório final{% endblock %}
+{% block conteudo %}
+  <div class="pagina-container pagina-container-relatorio">
+    <div class="secao-topo secao-topo-dashboard">
+      <p class="intro intro-compacta">Totais da inspeção, motivos de reprovação e ocupação das caixas.</p>
+      <a class="btn btn-secundario btn-compacto" href="{{ url_for('relatorios.baixar_pdf') }}">Baixar Relatório</a>
+    </div>
+
+    <section class="grade-numeros grade-kpis" aria-label="Totais do relatório">
+      <a class="cartao numero numero-compacto kpi-clicavel" href="{{ url_for('pecas.lista') }}">
+        <p>Peças</p>
+        <strong>{{ relatorio.total }}</strong>
+        <span class="kpi-dica">Ver todas</span>
+      </a>
+      <a class="cartao numero numero-compacto kpi-clicavel kpi-ok" href="{{ url_for('pecas.lista', resultado='aprovadas') }}">
+        <p>Aprovadas</p>
+        <strong class="texto-ok">{{ relatorio.aprovadas }}</strong>
+        <span class="kpi-dica">Ver aprovadas</span>
+      </a>
+      <a class="cartao numero numero-compacto kpi-clicavel kpi-erro" href="{{ url_for('pecas.lista', resultado='reprovadas') }}">
+        <p>Reprovadas</p>
+        <strong class="texto-erro">{{ relatorio.reprovadas }}</strong>
+        <span class="kpi-dica">Ver reprovadas</span>
+      </a>
+      <article class="cartao numero numero-compacto kpi-estatico" aria-label="Taxa de aprovação">
+        <p>Taxa</p>
+        <strong>{{ relatorio.taxa | br_percentual }}</strong>
+      </article>
+    </section>
+
+    <p class="meta-linha meta-caixas" aria-label="Situação das caixas">
+      <span>Caixas</span>
+      <strong>{{ relatorio.caixas_abertas }}</strong> abertas
+      · <strong>{{ relatorio.caixas_fechadas }}</strong> fechadas
+      · <strong>{{ relatorio.total_caixas }}</strong> utilizadas
+      · <strong>{{ relatorio.pecas_armazenadas }}</strong> armazenadas
+    </p>
+
+    <div class="grade-duas grade-duas-compacta grade-graficos grade-relatorio">
+      <section class="cartao cartao-compacto cartao-grafico cartao-relatorio">
+        <h2>Motivos de reprovação</h2>
+        {% if not relatorio.motivos %}
+          <p class="vazio-inline">Nenhum motivo registrado.</p>
+        {% else %}
+          {% set ns = namespace(maior=1) %}
+          {% for nome, quantidade in relatorio.motivos %}
+            {% if quantidade > ns.maior %}{% set ns.maior = quantidade %}{% endif %}
+          {% endfor %}
+          <div class="grafico grafico-compacto grafico-relatorio">
+            {% for nome, quantidade in relatorio.motivos %}
+              <div class="barra-linha barra-motivo barra-curta barra-relatorio">
+                <span>{{ nome }}</span>
+                <span class="trilho"><span class="preenchimento preenchimento-alerta" style="width: {{ (quantidade * 100 / ns.maior)|round(1) }}%"></span></span>
+                <strong>{{ quantidade }}</strong>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </section>
+
+      <section class="cartao cartao-compacto cartao-grafico cartao-relatorio">
+        <h2>Caixas</h2>
+        {% if not relatorio.caixas %}
+          <p class="vazio-inline">Nenhuma caixa utilizada.</p>
+        {% else %}
+          <ul class="lista-resumo lista-resumo-relatorio">
+            {% for caixa in relatorio.caixas %}
+              <li>
+                <div class="lista-resumo-cabecalho">
+                  <strong>Caixa {{ caixa.id }}</strong>
+                  {% if caixa.fechada %}
+                    <span class="selo selo-fechada">Fechada</span>
+                  {% else %}
+                    <span class="selo selo-aberta">Aberta</span>
+                  {% endif %}
+                </div>
+                <p class="lista-resumo-detalhe">{{ caixa.resumo_ocupacao }}</p>
+                <time datetime="{{ caixa.criada_em.isoformat() }}">{{ caixa.criada_em | br_data }}</time>
+              </li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </section>
+    </div>
+  </div>
+{% endblock %}

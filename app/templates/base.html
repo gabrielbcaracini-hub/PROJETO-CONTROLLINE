@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}LineControl{% endblock %}</title>
+  <link rel="icon" href="{{ url_for('static', filename='img/favicon.svg', v='6') }}" type="image/svg+xml">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v='6') }}">
+</head>
+<body>
+  <a class="pular" href="#conteudo">Ir para o conteúdo</a>
+  <div class="moldura">
+    <aside class="sidebar" id="menu-lateral">
+      <a class="marca" href="{{ url_for('inicio.painel') }}">
+        <span class="marca-sinal" aria-hidden="true">
+          <svg viewBox="0 0 40 40" width="38" height="38" focusable="false" fill="none">
+            <defs>
+              <linearGradient id="ql-logo" x1="8" y1="6" x2="32" y2="34" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#5eead4"/>
+                <stop offset="50%" stop-color="#2a9d8f"/>
+                <stop offset="100%" stop-color="#238276"/>
+              </linearGradient>
+            </defs>
+            <path d="M20 4 33 9.5v12.5c0 6.5-5 12.5-13 14.5-8-2-13-8-13-14.5V9.5L20 4z" fill="url(#ql-logo)"/>
+            <path d="M20 12a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z" fill="#0c1219" fill-opacity="0.82"/>
+            <path d="M22.5 20.5 25.5 24.5" stroke="#0c1219" stroke-width="1.8" stroke-linecap="round" stroke-opacity="0.82"/>
+            <path d="M15 18.5 17.5 21 23.5 15" stroke="#fff" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" opacity="0.95"/>
+          </svg>
+        </span>
+        <span>
+          <strong>LineControl</strong>
+          <small>Controle de linha de produção</small>
+        </span>
+      </a>
+      <nav class="menu" aria-label="Principal">
+        <a class="{% if request.endpoint == 'inicio.painel' %}ativo{% endif %}" href="{{ url_for('inicio.painel') }}">Dashboard</a>
+        <a class="{% if request.endpoint in ['pecas.lista', 'pecas.detalhe'] %}ativo{% endif %}" href="{{ url_for('pecas.lista') }}">Peças</a>
+        <a class="{% if request.endpoint == 'pecas.nova' %}ativo{% endif %}" href="{{ url_for('pecas.nova') }}">Cadastrar peça</a>
+        <a class="{% if request.endpoint == 'caixas.lista' %}ativo{% endif %}" href="{{ url_for('caixas.lista') }}">Caixas</a>
+        <a class="{% if request.endpoint == 'relatorios.ver' %}ativo{% endif %}" href="{{ url_for('relatorios.ver') }}">Relatórios</a>
+      </nav>
+      <p class="nota-lateral">Inspeção simulada. Sem sensores e sem dados pessoais.</p>
+    </aside>
+    <div class="miolo">
+      <header class="topo">
+        <div class="topo-linha">
+          <button class="btn btn-secundario btn-menu" type="button" aria-expanded="false" aria-controls="menu-lateral" data-menu>
+            Menu
+          </button>
+          <div class="topo-titulo">
+            <p class="olho">{% block olho %}Linha de inspeção{% endblock %}</p>
+            <h1>{% block cabecalho %}Dashboard{% endblock %}</h1>
+          </div>
+        </div>
+      </header>
+      <main id="conteudo" tabindex="-1">
+        {% with mensagens = get_flashed_messages(with_categories=true) %}
+          {% if mensagens %}
+            <div class="avisos">
+              {% for categoria, texto in mensagens %}
+                <p class="aviso aviso-{{ categoria }}" role="{{ 'alert' if categoria == 'erro' else 'status' }}">{{ texto }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+        {% block conteudo %}{% endblock %}
+      </main>
+    </div>
+  </div>
+
+  <dialog class="dialogo" id="dialogo-excluir" aria-labelledby="titulo-excluir">
+    <form method="post" id="form-excluir">
+      <h2 id="titulo-excluir">Excluir peça</h2>
+      <p id="texto-excluir">Esta ação remove a peça e reorganiza as caixas das peças aprovadas que permanecerem.</p>
+      <label class="check" for="confirmar-exclusao">
+        <input id="confirmar-exclusao" type="checkbox" name="confirmar" value="y" required>
+        Confirmo a exclusão desta peça
+      </label>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="acoes">
+        <button class="btn btn-secundario" type="button" data-fechar-dialogo>Cancelar</button>
+        <button class="btn btn-perigo" type="submit">Excluir peça</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script id="regras-qualidade" type="application/json">{{ regras_qualidade | tojson }}</script>
+  <script src="{{ url_for('static', filename='js/app.js', v='6') }}"></script>
+</body>
+</html>

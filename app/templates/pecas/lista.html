@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block titulo %}Peças · LineControl{% endblock %}
+{% block olho %}Inspeção{% endblock %}
+{% block cabecalho %}Peças{% endblock %}
+{% block conteudo %}
+  <div class="pagina-container">
+    <div class="secao-topo secao-topo-dashboard">
+      <p class="resumo-consulta intro-compacta">{{ pecas | length }} peça(s) nesta consulta</p>
+      <a class="btn btn-primario btn-compacto" href="{{ url_for('pecas.nova') }}">Cadastrar peça</a>
+    </div>
+
+    <nav class="filtros-rapidos" aria-label="Filtros rápidos por resultado">
+      <a class="filtro-pill{% if resultado == 'todas' %} ativo{% endif %}" href="{{ url_for('pecas.lista', cor=cor or none, q=q or none) }}">Todas</a>
+      <a class="filtro-pill filtro-pill-ok{% if resultado == 'aprovadas' %} ativo{% endif %}" href="{{ url_for('pecas.lista', resultado='aprovadas', cor=cor or none, q=q or none) }}">Aprovadas</a>
+      <a class="filtro-pill filtro-pill-erro{% if resultado == 'reprovadas' %} ativo{% endif %}" href="{{ url_for('pecas.lista', resultado='reprovadas', cor=cor or none, q=q or none) }}">Reprovadas</a>
+    </nav>
+
+    <form class="filtros filtros-compactos" method="get" action="{{ url_for('pecas.lista') }}">
+      <div class="campo">
+        <label for="resultado">Resultado</label>
+        <select id="resultado" name="resultado">
+          <option value="todas" {% if resultado == 'todas' %}selected{% endif %}>Todas</option>
+          <option value="aprovadas" {% if resultado == 'aprovadas' %}selected{% endif %}>Aprovadas</option>
+          <option value="reprovadas" {% if resultado == 'reprovadas' %}selected{% endif %}>Reprovadas</option>
+        </select>
+      </div>
+      <div class="campo">
+        <label for="cor">Cor</label>
+        <select id="cor" name="cor">
+          <option value="">Todas as cores</option>
+          {% for item in cores %}
+            <option value="{{ item }}" {% if cor == item %}selected{% endif %}>{{ item }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="campo">
+        <label for="q">Buscar por ID</label>
+        <input id="q" name="q" type="search" value="{{ q }}" maxlength="32" placeholder="Ex.: QA-001">
+      </div>
+      <div class="acoes acoes-fim">
+        <button class="btn btn-primario btn-compacto" type="submit">Filtrar</button>
+        <a class="btn btn-secundario btn-compacto" href="{{ url_for('pecas.lista') }}">Limpar</a>
+      </div>
+    </form>
+
+    {% if cores %}
+      <nav class="filtros-rapidos filtros-rapidos-cores" aria-label="Filtros rápidos por cor">
+        <a class="filtro-pill{% if not cor %} ativo{% endif %}" href="{{ url_for('pecas.lista', resultado=resultado if resultado != 'todas' else none, q=q or none) }}">Todas as cores</a>
+        {% for item in cores %}
+          <a class="filtro-pill{% if cor == item %} ativo{% endif %}" href="{{ url_for('pecas.lista', resultado=resultado if resultado != 'todas' else none, cor=item, q=q or none) }}">{{ item }}</a>
+        {% endfor %}
+      </nav>
+    {% endif %}
+
+    {% if not pecas %}
+      <div class="cartao cartao-compacto vazio-compacto">
+        {% if resultado == 'todas' and not cor and not q %}
+          <p class="vazio-titulo">Nenhuma peça cadastrada</p>
+          <p>O cadastro dispara a avaliação automática de peso, cor e comprimento.</p>
+          <a class="btn btn-primario btn-compacto" href="{{ url_for('pecas.nova') }}">Cadastrar a primeira peça</a>
+        {% else %}
+          <p class="vazio-titulo">Nenhuma peça com esses filtros</p>
+          <p>Ajuste o resultado, a cor ou o ID, ou limpe a consulta para ver todas.</p>
+        {% endif %}
+      </div>
+    {% else %}
+      <section class="cartao cartao-compacto cartao-tabela">
+        <h2>Peças cadastradas</h2>
+        <div class="tabela-wrap tabela-compacta tabela-sem-moldura">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Peso</th>
+                <th scope="col">Cor</th>
+                <th scope="col">Comp.</th>
+                <th scope="col">Resultado</th>
+                <th scope="col">Motivo</th>
+                <th scope="col">Cx</th>
+                <th scope="col">Cadastro</th>
+                <th scope="col">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for peca in pecas %}
+                <tr>
+                  <td class="col-id" data-label="ID"><a href="{{ url_for('pecas.detalhe', codigo=peca.codigo) }}">{{ peca.codigo }}</a></td>
+                  <td class="col-numero" data-label="Peso">{{ peca.peso | br_numero }} g</td>
+                  <td data-label="Cor">
+                    <a class="filtro-cor-tabela" href="{{ url_for('pecas.lista', cor=peca.cor, resultado=resultado if resultado != 'todas' else none, q=q or none) }}">{{ peca.cor }}</a>
+                  </td>
+                  <td class="col-numero" data-label="Comprimento">{{ peca.comprimento | br_numero }} cm</td>
+                  <td data-label="Resultado">
+                    {% if peca.aprovada %}
+                      <a class="selo selo-ok selo-filtro" href="{{ url_for('pecas.lista', resultado='aprovadas', cor=cor or none, q=q or none) }}">Aprovada</a>
+                    {% else %}
+                      <a class="selo selo-erro selo-filtro" href="{{ url_for('pecas.lista', resultado='reprovadas', cor=cor or none, q=q or none) }}">Reprovada</a>
+                    {% endif %}
+                  </td>
+                  <td class="col-motivo" data-label="Motivo">
+                    {% if peca.motivos_texto %}
+                      {{ peca.motivos_texto | join('; ') }}
+                    {% else %}
+                      —
+                    {% endif %}
+                  </td>
+                  <td data-label="Caixa">{% if peca.caixa_id %}Cx {{ peca.caixa_id }}{% else %}—{% endif %}</td>
+                  <td class="col-data" data-label="Cadastro"><time datetime="{{ peca.cadastrada_em.isoformat() }}">{{ peca.cadastrada_em | br_data }}</time></td>
+                  <td data-label="Ações">
+                    <div class="acoes">
+                      <a class="btn btn-secundario btn-compacto" href="{{ url_for('pecas.detalhe', codigo=peca.codigo) }}">Abrir</a>
+                      <button
+                        class="btn btn-perigo btn-compacto"
+                        type="button"
+                        data-excluir
+                        data-codigo="{{ peca.codigo }}"
+                        data-url="{{ url_for('pecas.excluir', codigo=peca.codigo) }}"
+                      >Excluir</button>
+                    </div>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    {% endif %}
+  </div>
+{% endblock %}

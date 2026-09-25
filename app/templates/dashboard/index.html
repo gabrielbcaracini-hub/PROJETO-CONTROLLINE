@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block titulo %}Dashboard · LineControl{% endblock %}
+{% block olho %}Visão da linha{% endblock %}
+{% block cabecalho %}Dashboard{% endblock %}
+{% block conteudo %}
+  <div class="dashboard-container">
+    <div class="secao-topo secao-topo-dashboard">
+      <p class="intro intro-compacta">Resumo da linha de inspeção.</p>
+      <div class="help-popover-wrap">
+        <button class="btn btn-secundario btn-compacto" type="button" data-ajuda aria-expanded="false" aria-controls="help-popover">Ajuda</button>
+        <div class="help-popover" id="help-popover" hidden role="dialog" aria-labelledby="help-popover-titulo">
+          <div class="help-popover-cabecalho">
+            <h2 id="help-popover-titulo">Ajuda</h2>
+            <button class="help-popover-fechar" type="button" data-fechar-ajuda aria-label="Fechar ajuda">&times;</button>
+          </div>
+          <form id="form-ajuda" class="help-popover-form">
+            <textarea id="pergunta-ajuda" name="pergunta" rows="2" placeholder="Ex.: Como aprovar uma peça?" required></textarea>
+            <button class="btn btn-primario btn-compacto" type="submit">Perguntar</button>
+          </form>
+          <div class="resposta-ajuda" id="resposta-ajuda" hidden role="status"></div>
+        </div>
+      </div>
+    </div>
+
+    <section class="grade-numeros grade-kpis" aria-label="Indicadores">
+      <a class="cartao numero numero-compacto kpi-clicavel" href="{{ url_for('pecas.lista') }}">
+        <p>Peças</p>
+        <strong>{{ painel.total }}</strong>
+        <span class="kpi-dica">Ver todas</span>
+      </a>
+      <a class="cartao numero numero-compacto kpi-clicavel kpi-ok" href="{{ url_for('pecas.lista', resultado='aprovadas') }}">
+        <p>Aprovadas</p>
+        <strong class="texto-ok">{{ painel.aprovadas }}</strong>
+        <span class="kpi-dica">Ver aprovadas</span>
+      </a>
+      <a class="cartao numero numero-compacto kpi-clicavel kpi-erro" href="{{ url_for('pecas.lista', resultado='reprovadas') }}">
+        <p>Reprovadas</p>
+        <strong class="texto-erro">{{ painel.reprovadas }}</strong>
+        <span class="kpi-dica">Ver reprovadas</span>
+      </a>
+      <article class="cartao numero numero-compacto kpi-estatico" aria-label="Taxa de aprovação">
+        <p>Taxa</p>
+        <strong>{{ painel.taxa | br_percentual }}</strong>
+      </article>
+    </section>
+
+    <p class="meta-linha meta-caixas" aria-label="Situação das caixas">
+      <span>Caixas</span>
+      <strong>{{ painel.caixas_abertas }}</strong> abertas
+      · <strong>{{ painel.caixas_fechadas }}</strong> fechadas
+      · <strong>{{ painel.total_caixas }}</strong> utilizadas
+    </p>
+
+    <div class="grade-duas grade-duas-compacta grade-graficos">
+      <section class="cartao cartao-compacto cartao-grafico">
+        <h2>Aprovadas e reprovadas</h2>
+        {% if painel.total == 0 %}
+          <p class="vazio-inline">Sem peças cadastradas ainda.</p>
+        {% else %}
+          <div class="grafico grafico-compacto" role="img" aria-label="{{ painel.aprovadas }} aprovadas e {{ painel.reprovadas }} reprovadas">
+            {% set base = painel.total %}
+            <div class="barra-linha barra-curta">
+              <span>Aprov.</span>
+              <span class="trilho"><span class="preenchimento preenchimento-ok" style="width: {{ (painel.aprovadas * 100 / base)|round(1) }}%"></span></span>
+              <strong>{{ painel.aprovadas }}</strong>
+            </div>
+            <div class="barra-linha barra-curta">
+              <span>Reprov.</span>
+              <span class="trilho"><span class="preenchimento preenchimento-erro" style="width: {{ (painel.reprovadas * 100 / base)|round(1) }}%"></span></span>
+              <strong>{{ painel.reprovadas }}</strong>
+            </div>
+          </div>
+        {% endif %}
+      </section>
+
+      <section class="cartao cartao-compacto cartao-grafico">
+        <h2>Motivos de reprovação</h2>
+        {% if not painel.motivos %}
+          <p class="vazio-inline">Nenhum motivo registrado.</p>
+        {% else %}
+          {% set ns = namespace(maior=1) %}
+          {% for nome, quantidade in painel.motivos %}
+            {% if quantidade > ns.maior %}{% set ns.maior = quantidade %}{% endif %}
+          {% endfor %}
+          <div class="grafico grafico-compacto">
+            {% for nome, quantidade in painel.motivos %}
+              <div class="barra-linha barra-motivo barra-curta">
+                <span>{{ nome }}</span>
+                <span class="trilho"><span class="preenchimento preenchimento-alerta" style="width: {{ (quantidade * 100 / ns.maior)|round(1) }}%"></span></span>
+                <strong>{{ quantidade }}</strong>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </section>
+    </div>
+
+    <section class="cartao cartao-compacto cartao-atividade">
+      <h2>Atividade recente</h2>
+      {% if not painel.atividade %}
+        <p class="vazio-inline vazio-atividade">Nenhuma operação registrada. <a href="{{ url_for('pecas.nova') }}">Cadastrar peça</a></p>
+      {% else %}
+        <ol class="atividade atividade-compacta">
+          {% for item in painel.atividade[:4] %}
+            <li>
+              <time datetime="{{ item.criada_em.isoformat() }}">{{ item.criada_em | br_data }}</time>
+              <span class="selo selo-neutro">{{ item.acao }}</span>
+              <p>{{ item.descricao }}</p>
+            </li>
+          {% endfor %}
+        </ol>
+      {% endif %}
+    </section>
+  </div>
+{% endblock %}

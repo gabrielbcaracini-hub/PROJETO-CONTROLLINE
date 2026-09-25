@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <defs>
+    <linearGradient id="ql-bg" x1="4" y1="4" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0c1219"/>
+      <stop offset="100%" stop-color="#141c27"/>
+    </linearGradient>
+    <linearGradient id="ql-shield" x1="8" y1="6" x2="24" y2="26" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#5eead4"/>
+      <stop offset="55%" stop-color="#2a9d8f"/>
+      <stop offset="100%" stop-color="#238276"/>
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="7" fill="url(#ql-bg)"/>
+  <path d="M16 5.5 24.5 9v8.2c0 5.2-3.6 9.8-8.5 11.3-4.9-1.5-8.5-6.1-8.5-11.3V9L16 5.5z" fill="url(#ql-shield)"/>
+  <path d="M16 10.5a4.2 4.2 0 1 0 0 8.4 4.2 4.2 0 0 0 0-8.4zm0 1.6a2.6 2.6 0 1 1 0 5.2 2.6 2.6 0 0 1 0-5.2z" fill="#0c1219" fill-opacity="0.85"/>
+  <path d="M18.1 17.2 20.4 20" stroke="#0c1219" stroke-width="1.6" stroke-linecap="round" fill="none" stroke-opacity="0.85"/>
+  <path d="M12.5 14.8 14.8 17.2 19.8 12" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.95"/>
+</svg>

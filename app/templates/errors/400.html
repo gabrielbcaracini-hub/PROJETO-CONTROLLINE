@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block titulo %}{{ titulo }} · LineControl{% endblock %}
+{% block olho %}Formulário{% endblock %}
+{% block cabecalho %}{{ titulo }}{% endblock %}
+{% block conteudo %}
+  <div class="vazio">
+    <p class="vazio-titulo">{{ titulo }}</p>
+    <p>{{ mensagem }}</p>
+    <a class="btn btn-primario" href="{{ url_for('inicio.painel') }}">Voltar ao dashboard</a>
+  </div>
+{% endblock %}

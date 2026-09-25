@@ -1,0 +1,43 @@
+Pacotes baixados para desenvolver e executar o LineControl
+=========================================================
+
+Esta pasta guarda os arquivos .whl (instaladores Python) usados no projeto.
+No seu PC, o instalar.bat instala a partir DAQUI, sem precisar baixar de novo.
+
+Pacotes pedidos no trabalho
+---------------------------
+Flask 3.1.3                 site web
+Flask-SQLAlchemy 3.1.1      ligação do Flask com o banco
+Flask-Migrate 4.1.0         criação/atualização das tabelas
+Flask-WTF 1.3.0             formulários e proteção CSRF
+python-dotenv 1.2.3         leitura do arquivo .env
+pytest 9.1.1                testes
+
+O que o Flask e os outros puxam junto
+-------------------------------------
+Werkzeug 3.1.8              servidor e requisições HTTP
+Jinja2 3.1.6                templates HTML
+MarkupSafe 3.0.3            escape de texto nos templates
+itsdangerous 2.2.0          tokens de segurança
+click 8.5.0                 linha de comando
+blinker 1.9.0               sinais internos do Flask
+SQLAlchemy 2.0.54           banco SQLite
+alembic 1.20.0              migrations (usado pelo Flask-Migrate)
+Mako 1.4.3                  templates das migrations
+greenlet 3.5.6              apoio do SQLAlchemy
+WTForms 3.2.2               campos de formulário (usado pelo Flask-WTF)
+typing_extensions 4.16.0    tipos do Python
+packaging 26.3              versão de pacotes (pytest)
+pluggy 1.6.0                plugins do pytest
+iniconfig 2.3.0             leitura do pytest.ini
+Pygments 2.21.0             destaque de texto no pytest
+
+Há arquivos win_amd64 (Windows) e manylinux (Linux) para
+MarkupSafe, SQLAlchemy e greenlet, nas versões
+Python 3.10, 3.11, 3.12 e 3.13.
+
+O que NÃO precisa baixar
+------------------------
+SQLite já vem no Python.
+HTML, CSS e JavaScript deste projeto são arquivos da pasta app/.
+Não foi usado Bootstrap nem biblioteca de gráficos.

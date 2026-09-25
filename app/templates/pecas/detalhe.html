@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block titulo %}Peça {{ peca.codigo }} · LineControl{% endblock %}
+{% block olho %}Resultado da inspeção{% endblock %}
+{% block cabecalho %}Peça {{ peca.codigo }}{% endblock %}
+{% block conteudo %}
+  <article class="resultado {{ 'resultado-ok' if peca.aprovada else 'resultado-erro' }}" aria-live="polite">
+    <p class="resultado-kicker">{% if cadastrada %}Cadastro concluído{% else %}Ficha da peça{% endif %}</p>
+    <h2>{% if peca.aprovada %}PEÇA APROVADA{% else %}PEÇA REPROVADA{% endif %}</h2>
+    {% if peca.aprovada %}
+      <p>Todos os critérios de qualidade foram atendidos.</p>
+      {% if peca.caixa %}
+        <p>Armazenada na caixa {{ peca.caixa.id }} · {{ peca.caixa.resumo_ocupacao }}.</p>
+      {% endif %}
+    {% else %}
+      <p>A peça não entrou em caixa.</p>
+      <p>Motivos:</p>
+      <ul>
+        {% for motivo in peca.motivos_texto %}
+          <li>{{ motivo }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </article>
+
+  <section class="cartao">
+    <h2>Critérios avaliados</h2>
+    <ul class="lista-criterios">
+      {% for item in itens %}
+        <li>
+          <div>
+            <strong>{{ item.nome }}</strong>
+            <p>{{ item.valor }}</p>
+            <small>{{ item.regra }}</small>
+          </div>
+          {% if item.aprovado %}
+            <span class="selo selo-ok">Atendido</span>
+          {% else %}
+            <span class="selo selo-erro">Falhou · {{ item.detalhe }}</span>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  </section>
+
+  <dl class="ficha">
+    <div><dt>ID</dt><dd>{{ peca.codigo }}</dd></div>
+    <div><dt>Peso</dt><dd>{{ peca.peso | br_numero }} g</dd></div>
+    <div><dt>Cor</dt><dd>{{ peca.cor }}</dd></div>
+    <div><dt>Comprimento</dt><dd>{{ peca.comprimento | br_numero }} cm</dd></div>
+    <div><dt>Resultado</dt><dd>{% if peca.aprovada %}Aprovada{% else %}Reprovada{% endif %}</dd></div>
+    <div><dt>Caixa</dt><dd>{% if peca.caixa_id %}{{ peca.caixa_id }}{% else %}Não armazenada{% endif %}</dd></div>
+    <div><dt>Cadastro</dt><dd>{{ peca.cadastrada_em | br_data }}</dd></div>
+  </dl>
+
+  <div class="acoes">
+    <a class="btn btn-primario" href="{{ url_for('pecas.nova') }}">Cadastrar outra</a>
+    <a class="btn btn-secundario" href="{{ url_for('pecas.lista') }}">Voltar à lista</a>
+    {% if peca.caixa_id %}
+      <a class="btn btn-secundario" href="{{ url_for('caixas.lista') }}">Ver caixas</a>
+    {% endif %}
+    <button
+      class="btn btn-perigo"
+      type="button"
+      data-excluir
+      data-codigo="{{ peca.codigo }}"
+      data-url="{{ url_for('pecas.excluir', codigo=peca.codigo) }}"
+    >Excluir</button>
+  </div>
+{% endblock %}

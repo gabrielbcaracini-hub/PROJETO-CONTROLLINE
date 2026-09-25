@@ -1,0 +1,51 @@
+LINECONTROL — pasta completa do sistema
+======================================
+
+Esta pasta é o sistema inteiro para usar no SEU computador.
+Não depende da nuvem depois que você copiar ela para o PC.
+
+O que tem aqui
+--------------
+app\                 código Python, páginas HTML, CSS e JavaScript
+docs\                teoria e roteiro da apresentação
+tests\               testes
+migrations\          criação do banco
+dependencias\        TUDO que foi baixado para desenvolver (arquivos .whl)
+instance\            banco SQLite de demonstração (quando existir)
+run.py               liga o site
+seed.py              dados de demonstração
+requirements.txt     lista dos pacotes
+instalar.bat         instala no Windows usando a pasta dependencias
+executar.bat         abre o sistema no Windows
+testar.bat           roda os testes no Windows
+
+Como colocar no seu PC
+----------------------
+1. Baixe o arquivo qualilinha-sistema-completo.zip
+2. Extraia para um lugar fácil, por exemplo:
+   Área de trabalho
+   ou Documentos
+3. Abra a pasta extraída chamada qualilinha
+
+Como ligar no Windows
+---------------------
+1. Instale o Python 3.10 ou superior:
+   https://www.python.org/downloads/
+   Na instalação, marque "Add python.exe to PATH"
+2. Dê dois cliques em instalar.bat
+   Ele usa os arquivos da pasta dependencias. Não precisa de internet.
+3. Dê dois cliques em executar.bat
+4. Abra o navegador em:
+   http://127.0.0.1:8741
+
+Se o instalar.bat falhar, o Python não está no PATH.
+Abra o Prompt de Comando DENTRO desta pasta e rode:
+
+    py -3 -m venv .venv
+    .venv\Scripts\python -m pip install --no-index --find-links=dependencias -r requirements.txt
+    .venv\Scripts\python run.py
+
+O que você precisa ter no PC
+----------------------------
+Só o Python. O restante já está nesta pasta.
+SQLite vem junto com o Python. Não baixa programa de banco.

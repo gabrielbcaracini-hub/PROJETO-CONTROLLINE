@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block titulo %}Caixas · LineControl{% endblock %}
+{% block olho %}Armazenamento{% endblock %}
+{% block cabecalho %}Caixas{% endblock %}
+{% block conteudo %}
+  <p class="intro">Somente peças aprovadas entram aqui. Cada caixa comporta {{ regras_qualidade.capacidade }} peças. Ao completar, o status passa para fechada e a próxima aprovada abre outra caixa.</p>
+
+  {% if not caixas %}
+    <div class="vazio">
+      <p class="vazio-titulo">Nenhuma caixa aberta</p>
+      <p>A primeira peça aprovada cria a caixa 1 automaticamente.</p>
+      <a class="btn btn-primario" href="{{ url_for('pecas.nova') }}">Cadastrar peça</a>
+    </div>
+  {% else %}
+    <div class="grade-caixas">
+      {% for caixa in caixas %}
+        <article class="cartao caixa {{ 'caixa-fechada' if caixa.fechada else 'caixa-aberta' }}">
+          <header class="secao-topo">
+            <h2>Caixa {{ caixa.id }}</h2>
+            {% if caixa.fechada %}
+              <span class="selo selo-fechada">Fechada</span>
+            {% else %}
+              <span class="selo selo-aberta">Aberta</span>
+            {% endif %}
+          </header>
+          <p class="ocupacao">{{ caixa.resumo_ocupacao }}</p>
+          <div class="slots" aria-hidden="true">
+            {% for indice in range(caixa.capacidade) %}
+              <span class="slot{% if indice < caixa.quantidade %} slot-cheia{% endif %}"></span>
+            {% endfor %}
+          </div>
+          <p class="meta"><time datetime="{{ caixa.criada_em.isoformat() }}">Criada em {{ caixa.criada_em | br_data }}</time></p>
+          <h3>Peças armazenadas</h3>
+          {% if caixa.pecas %}
+            <ul class="pecas-caixa">
+              {% for peca in caixa.pecas %}
+                <li>
+                  <a href="{{ url_for('pecas.detalhe', codigo=peca.codigo) }}">{{ peca.codigo }}</a>
+                  <span>{{ peca.cor }} · {{ peca.peso | br_numero }} g · {{ peca.comprimento | br_numero }} cm</span>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p class="vazio-inline">Esta caixa não tem peças.</p>
+          {% endif %}
+        </article>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endblock %}
