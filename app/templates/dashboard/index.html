@@ -8,20 +8,6 @@
       <p class="intro intro-compacta">Resumo da linha de inspeção: totais, qualidade e caixas.</p>
       <div class="secao-topo-acoes">
         <a class="btn btn-primario btn-compacto" href="{{ url_for('pecas.nova') }}">Cadastrar peça</a>
-        <div class="help-popover-wrap">
-          <button class="btn btn-secundario btn-compacto" type="button" data-ajuda aria-expanded="false" aria-controls="help-popover">Ajuda</button>
-          <div class="help-popover" id="help-popover" hidden role="dialog" aria-labelledby="help-popover-titulo">
-            <div class="help-popover-cabecalho">
-              <h2 id="help-popover-titulo">Ajuda</h2>
-              <button class="help-popover-fechar" type="button" data-fechar-ajuda aria-label="Fechar ajuda">&times;</button>
-            </div>
-            <form id="form-ajuda" class="help-popover-form">
-              <textarea id="pergunta-ajuda" name="pergunta" rows="2" placeholder="Ex.: Como aprovar uma peça?" required></textarea>
-              <button class="btn btn-primario btn-compacto" type="submit">Perguntar</button>
-            </form>
-            <div class="resposta-ajuda" id="resposta-ajuda" hidden role="status"></div>
-          </div>
-        </div>
       </div>
     </div>
 

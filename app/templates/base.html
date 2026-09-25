@@ -4,11 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block titulo %}LineControl{% endblock %}</title>
-  <link rel="icon" href="{{ url_for('static', filename='img/favicon.svg', v='8') }}" type="image/svg+xml">
+  <link rel="icon" href="{{ url_for('static', filename='img/favicon.svg', v='9') }}" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v='8') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v='9') }}">
 </head>
 <body>
   <a class="pular" href="#conteudo">Ir para o conteúdo</a>
@@ -46,10 +46,26 @@
     </aside>
     <div class="miolo">
       <header class="topo">
-        <div class="topo-barra">
+        <div class="topo-util">
           <button class="btn btn-secundario btn-menu" type="button" aria-expanded="false" aria-controls="menu-lateral" data-menu>
             Menu
           </button>
+          <div class="topo-util-direita">
+            <div class="help-popover-wrap">
+              <button class="btn btn-secundario btn-compacto" type="button" data-ajuda aria-expanded="false" aria-controls="help-popover">Ajuda</button>
+              <div class="help-popover" id="help-popover" hidden role="dialog" aria-labelledby="help-popover-titulo">
+                <div class="help-popover-cabecalho">
+                  <h2 id="help-popover-titulo">Ajuda</h2>
+                  <button class="help-popover-fechar" type="button" data-fechar-ajuda aria-label="Fechar ajuda">&times;</button>
+                </div>
+                <form id="form-ajuda" class="help-popover-form">
+                  <textarea id="pergunta-ajuda" name="pergunta" rows="2" placeholder="Ex.: Como aprovar uma peça?" required></textarea>
+                  <button class="btn btn-primario btn-compacto" type="submit">Perguntar</button>
+                </form>
+                <div class="resposta-ajuda" id="resposta-ajuda" hidden role="status"></div>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="topo-titulo">
           <p class="olho">{% block olho %}Linha de inspeção{% endblock %}</p>
@@ -88,6 +104,6 @@
   </dialog>
 
   <script id="regras-qualidade" type="application/json">{{ regras_qualidade | tojson }}</script>
-  <script src="{{ url_for('static', filename='js/app.js', v='8') }}"></script>
+  <script src="{{ url_for('static', filename='js/app.js', v='9') }}"></script>
 </body>
 </html>
